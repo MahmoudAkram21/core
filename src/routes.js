@@ -50,10 +50,20 @@ const Modals = React.lazy(() => import('./views/notifications/modals/Modals'))
 const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
+ProtectedRoute = React.lazy(() => import('./views/pages/Auth/ProtectedRoute'))
 
 const routes = [
+
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    element: (
+      <ProtectedRoute roles={['admin', 'teacher', 'student']}>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
+  },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

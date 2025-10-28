@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -15,8 +15,50 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+import { api } from '../../../../api/api'
+import { useAuth } from '../../../../context/AuthContext'
+import Cookies from 'universal-cookie'
 
 const Login = () => {
+  const [form, setForm] = useState({ email: '', password: '' })
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const cookie = new Cookies();
+
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+
+
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const res = await api.post('login', form)
+      cookie.set('token', res.data.data.token)
+      navigate('/dashboard')
+
+      
+      const { user, token } = res.data
+      login(user, token)
+
+      // redirect based on role
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard')
+      } else if (user.role === 'teacher') {
+        navigate('/teacher/dashboard')
+      } else {
+        navigate('/student/dashboard')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -25,15 +67,24 @@ const Login = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm>
+                  <CForm onSubmit={handleSubmit}>
                     <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
+                    <p className="text-body-secondary">Sign in to your account</p>
+
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      <CFormInput
+                        type="email"
+                        placeholder="Email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        required
+                      />
                     </CInputGroup>
+
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
@@ -41,12 +92,16 @@ const Login = () => {
                       <CFormInput
                         type="password"
                         placeholder="Password"
-                        autoComplete="current-password"
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        required
                       />
                     </CInputGroup>
+
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
+                        <CButton type="submit" color="primary" className="px-4">
                           Login
                         </CButton>
                       </CCol>
@@ -59,6 +114,7 @@ const Login = () => {
                   </CForm>
                 </CCardBody>
               </CCard>
+
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
                   <div>
@@ -68,7 +124,7 @@ const Login = () => {
                       tempor incididunt ut labore et dolore magna aliqua.
                     </p>
                     <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>
+                      <CButton color="light" className="mt-3" active tabIndex={-1}>
                         Register Now!
                       </CButton>
                     </Link>
