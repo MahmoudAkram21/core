@@ -23,9 +23,26 @@ import {
 import CIcon from '@coreui/icons-react'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
+import Cookies from 'universal-cookie'
+import { useNavigate } from 'react-router-dom'
+import { api } from '../../../api/api'
+import { useAuth } from '../../Context/AuthContext'
 
 const AppHeaderDropdown = () => {
-  const 
+  const cookies = new Cookies()
+  const navigate = useNavigate()
+  const { logout } = useAuth()
+
+  const handelLogout = async() => {
+  try {
+    const res = await api.post('logout')
+    cookies.remove('token')
+    logout();
+    navigate('/login')
+  } catch (error) {
+    console.log(error)
+  }
+  }
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
@@ -85,9 +102,9 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="#">
-          <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
+        <CDropdownItem >
+          <CIcon icon={cilLockLocked} onClick={handelLogout} className="me-2" />
+          Logout
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

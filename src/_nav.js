@@ -8,6 +8,7 @@ import {
   cilDescription,
   cilDrop,
   cilExternalLink,
+  cilList,
   cilNotes,
   cilPencil,
   cilPuzzle,
@@ -26,32 +27,69 @@ const _nav = [
       color: 'info',
       text: 'NEW',
     },
+    // ✅ Dashboard متاح لجميع الأدوار
+    allowedRoles: ['admin', 'superadmin', 'moderator', 'cashier', 'teacher', 'student'],
+  },
+  {
+    component: CNavTitle,
+    name: 'Admin Management',
+    // ✅ العنوان متاح فقط للـ admin و superadmin
+    allowedRoles: ['admin', 'superadmin', 'moderator'],
+  },
+  {
+    component: CNavItem,
+    name: 'Categories',
+    to: '/categories',
+    icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+    // ✅ Categories متاح فقط للـ admin, superadmin, moderator
+    allowedRoles: ['admin', 'superadmin', 'moderator'],
+  },
+  {
+    component: CNavItem,
+    name: 'Packages',
+    to: '/packages',
+    icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
+    // ✅ Packages متاح فقط للـ admin و superadmin
+    allowedRoles: ['admin', 'superadmin'],
+  },
+  {
+    component: CNavItem,
+    name: 'Settings',
+    to: '/settings',
+    icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
+    // ✅ Settings متاح فقط للـ admin و superadmin
+    allowedRoles: ['admin', 'superadmin'],
   },
   {
     component: CNavTitle,
     name: 'Theme',
+    allowedRoles: ['admin', 'superadmin'],
   },
   {
     component: CNavItem,
     name: 'Colors',
     to: '/theme/colors',
     icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
   },
   {
     component: CNavItem,
     name: 'Typography',
     to: '/theme/typography',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
   },
   {
     component: CNavTitle,
     name: 'Components',
+    allowedRoles: ['admin', 'superadmin'],
   },
   {
     component: CNavGroup,
     name: 'Base',
     to: '/base',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
     items: [
       {
         component: CNavItem,
@@ -186,6 +224,7 @@ const _nav = [
     name: 'Buttons',
     to: '/buttons',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
     items: [
       {
         component: CNavItem,
@@ -222,6 +261,7 @@ const _nav = [
     component: CNavGroup,
     name: 'Forms',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
     items: [
       {
         component: CNavItem,
@@ -391,25 +431,31 @@ const _nav = [
     name: 'Charts',
     to: '/charts',
     icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
   },
   {
     component: CNavGroup,
     name: 'Icons',
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
     items: [
       {
         component: CNavItem,
-        name: 'CoreUI Free',
+        name: 'CoreUI Icons',
         to: '/icons/coreui-icons',
+        badge: {
+          color: 'success',
+          text: 'NEW',
+        },
       },
       {
         component: CNavItem,
-        name: 'CoreUI Flags',
+        name: 'Flags',
         to: '/icons/flags',
       },
       {
         component: CNavItem,
-        name: 'CoreUI Brands',
+        name: 'Brands',
         to: '/icons/brands',
       },
     ],
@@ -418,6 +464,7 @@ const _nav = [
     component: CNavGroup,
     name: 'Notifications',
     icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    allowedRoles: ['admin', 'superadmin'],
     items: [
       {
         component: CNavItem,
@@ -440,53 +487,6 @@ const _nav = [
         to: '/notifications/toasts',
       },
     ],
-  },
-  {
-    component: CNavItem,
-    name: 'Widgets',
-    to: '/widgets',
-    icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
-  },
-  {
-    component: CNavTitle,
-    name: 'Extras',
-  },
-  {
-    component: CNavGroup,
-    name: 'Pages',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Login',
-        to: '/login',
-      },
-      {
-        component: CNavItem,
-        name: 'Register',
-        to: '/register',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 404',
-        to: '/404',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 500',
-        to: '/500',
-      },
-    ],
-  },
-  {
-    component: CNavItem,
-    name: 'Docs',
-    href: 'https://coreui.io/react/docs/templates/installation/',
-    icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },
 ]
 

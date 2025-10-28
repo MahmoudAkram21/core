@@ -54,7 +54,12 @@ import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import MainChart from './MainChart'
 
+// ✅ استيراد useAuth للحصول على الـ role
+import { useAuth } from '../../Context/AuthContext'
+
 const Dashboard = () => {
+  // ✅ احصل على الـ role من AuthContext
+  const { role, user } = useAuth()
   const progressExample = [
     { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
     { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
@@ -176,8 +181,110 @@ const Dashboard = () => {
     },
   ]
 
+  // ✅ دالة لجلب البيانات بناءً على الـ role
+  const getDashboardData = () => {
+    if (role === 'cashier') {
+      return {
+        title: '💰 Cashier Dashboard',
+        subtitle: 'Track sales and transactions',
+        metrics: [
+          { label: 'Daily Sales', value: '₩45,231', color: 'success' },
+          { label: 'Transactions', value: '127', color: 'info' },
+          { label: 'Pending', value: '12', color: 'warning' },
+          { label: 'Failed', value: '3', color: 'danger' },
+        ],
+      }
+    } else if (role === 'teacher' || role === 'student') {
+      return {
+        title: '📚 Student Dashboard',
+        subtitle: 'View your courses and progress',
+        metrics: [
+          { label: 'Courses', value: '5', color: 'primary' },
+          { label: 'Progress', value: '78%', color: 'success' },
+          { label: 'Assignments', value: '8', color: 'warning' },
+          { label: 'Certificates', value: '2', color: 'info' },
+        ],
+      }
+    } else if (role === 'moderator') {
+      return {
+        title: '🛡️ Moderator Dashboard',
+        subtitle: 'Monitor and manage content',
+        metrics: [
+          { label: 'Active Users', value: '342', color: 'info' },
+          { label: 'Pending Review', value: '23', color: 'warning' },
+          { label: 'Reported Items', value: '5', color: 'danger' },
+          { label: 'Approved', value: '89', color: 'success' },
+        ],
+      }
+    } else if (role === 'superadmin') {
+      return {
+        title: '👑 SuperAdmin Dashboard',
+        subtitle: 'Full system control and monitoring',
+        metrics: [
+          { label: 'Total Users', value: '2,842', color: 'primary' },
+          { label: 'System Health', value: '99.8%', color: 'success' },
+          { label: 'Active Sessions', value: '156', color: 'info' },
+          { label: 'Alerts', value: '4', color: 'warning' },
+        ],
+      }
+    } else {
+      // Admin
+      return {
+        title: '⚙️ Admin Dashboard',
+        subtitle: 'Manage system and resources',
+        metrics: [
+          { label: 'Total Users', value: '2,842', color: 'primary' },
+          { label: 'Active Orders', value: '89', color: 'success' },
+          { label: 'Categories', value: '12', color: 'info' },
+          { label: 'Packages', value: '5', color: 'warning' },
+        ],
+      }
+    }
+  }
+
+  const dashboardData = getDashboardData()
+
   return (
     <>
+      {/* ✅ Header عرض معلومات الـ Role والمستخدم */}
+      <CRow className="mb-4">
+        <CCol sm={12}>
+          <CCard>
+            <CCardBody>
+              <CRow>
+                <CCol sm={8}>
+                  <h3 className="mb-2">{dashboardData.title}</h3>
+                  <p className="text-muted">{dashboardData.subtitle}</p>
+                  <p>
+                    <strong>Welcome:</strong> {user?.name || 'User'} ({role?.toUpperCase()})
+                  </p>
+                </CCol>
+                <CCol sm={4} className="text-end">
+                  <div className="text-success">
+                    <h5>Role Access</h5>
+                    <span className="badge bg-info">{role}</span>
+                  </div>
+                </CCol>
+              </CRow>
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+
+      {/* ✅ عرض المقاييس المخصصة لكل role */}
+      <CRow className="mb-4">
+        {dashboardData.metrics.map((metric, index) => (
+          <CCol sm={6} lg={3} key={index}>
+            <CCard className="mb-4">
+              <CCardBody>
+                <div className="text-secondary text-truncate small">{metric.label}</div>
+                <div className={`fs-5 fw-semibold text-${metric.color}`}>{metric.value}</div>
+              </CCardBody>
+            </CCard>
+          </CCol>
+        ))}
+      </CRow>
+
       <WidgetsDropdown className="mb-4" />
       <CCard className="mb-4">
         <CCardBody>

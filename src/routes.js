@@ -50,7 +50,24 @@ const Modals = React.lazy(() => import('./views/notifications/modals/Modals'))
 const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
-ProtectedRoute = React.lazy(() => import('./views/pages/Auth/ProtectedRoute'))
+const ProtectedRoute = React.lazy(() => import('./views/pages/auth/ProtectedRoute'))
+
+// Categories
+const Categories = React.lazy(() => import('./views/categories/Categories'))
+
+// Packages
+const Packages = React.lazy(() => import('./views/packages/Packages'))
+
+// Settings
+const Settings = React.lazy(() => import('./views/settings/Settings'))
+
+// Auth Pages
+const ForgotPassword = React.lazy(() => import('./views/pages/auth/ForgotPassword'))
+const ResetPassword = React.lazy(() => import('./views/pages/auth/ResetPassword'))
+const VerifyEmail = React.lazy(() => import('./views/pages/auth/VerifyEmail'))
+
+// Account
+const AccountSettings = React.lazy(() => import('./views/pages/account/AccountSettings'))
 
 const routes = [
 
@@ -59,7 +76,7 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     element: (
-      <ProtectedRoute roles={['admin', 'teacher', 'student']}>
+      <ProtectedRoute roles={['admin', 'superadmin', 'moderator', 'cashier', 'teacher', 'student']}>
         <Dashboard />
       </ProtectedRoute>
     ),
@@ -107,6 +124,53 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
+  {
+    path: '/categories',
+    name: 'Categories',
+    element: (
+      <ProtectedRoute roles={['admin', 'superadmin', 'moderator']}>
+        <Categories />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/packages',
+    name: 'Packages',
+    element: (
+      <ProtectedRoute roles={['admin', 'superadmin']}>
+        <Packages />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    element: (
+      <ProtectedRoute roles={['admin', 'superadmin']}>
+        <Settings />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/account-settings',
+    name: 'Account Settings',
+    element: (
+      <ProtectedRoute roles={['admin', 'superadmin', 'moderator', 'cashier', 'teacher', 'student']}>
+        <AccountSettings />
+      </ProtectedRoute>
+    ),
+  },
+  { path: '/forgot-password', name: 'Forgot Password', element: ForgotPassword },
+  { path: '/reset-password', name: 'Reset Password', element: ResetPassword },
+  {
+    path: '/verify-email',
+    name: 'Verify Email',
+    element: (
+      <ProtectedRoute roles={['admin', 'superadmin', 'moderator', 'cashier', 'teacher', 'student']}>
+        <VerifyEmail />
+      </ProtectedRoute>
+    ),
+  },
 ]
 
 export default routes

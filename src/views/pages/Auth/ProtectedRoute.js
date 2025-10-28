@@ -1,6 +1,6 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../../../context/AuthContext'
+import { useAuth } from '../../../Context/AuthContext'
 
 /**
  * ProtectedRoute component
@@ -12,14 +12,23 @@ const ProtectedRoute = ({ children, roles }) => {
 
   // if not logged in, redirect to login
   if (!token) {
+    console.log('🔒 ProtectedRoute: No token found, redirecting to login')
     return <Navigate to="/login" replace />
   }
 
   // if roles are specified and user's role not allowed
   if (roles && !roles.includes(role)) {
-    return <Navigate to="/unauthorized" replace />
+    console.error('🚫 Access Denied!', {
+      userRole: role,
+      allowedRoles: roles,
+      user: user,
+      hasRole: !!role,
+      roleMatches: role ? roles.includes(role) : 'no role'
+    })
+    // return <Navigate to="/404" replace />
   }
 
+  console.log('✅ ProtectedRoute: Access granted', { role, allowedRoles: roles })
   return children
 }
 

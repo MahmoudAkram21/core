@@ -12,24 +12,20 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
+  CAlert,
+  CSpinner,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { api } from '../../../../api/api'
-import { useAuth } from '../../../../context/AuthContext'
+import { useAuth } from '../../../Context/AuthContext'
 import Cookies from 'universal-cookie'
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' })
-  const { login } = useAuth()
+  const { login, loading, error: authError } = useAuth()
   const navigate = useNavigate()
-  const cookie = new Cookies();
-
+   const  cookie = new  Cookies();
   const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-
-
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -37,25 +33,16 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError(null)
     try {
-      const res = await api.post('login', form)
-      cookie.set('token', res.data.data.token)
-      navigate('/dashboard')
-
-      
-      const { user, token } = res.data
-      login(user, token)
-
-      // redirect based on role
-      if (user.role === 'admin') {
-        navigate('/admin/dashboard')
-      } else if (user.role === 'teacher') {
-        navigate('/teacher/dashboard')
-      } else {
-        navigate('/student/dashboard')
-      }
+      await login(form.email, form.password)
+      // Small delay to ensure state updates propagate to ProtectedRoute
+      setTimeout(() => {
+        navigate('/dashboard')
+      }, 100)
     } catch (error) {
       console.error(error)
+      setError(error.response?.data?.message || 'Login failed')
     }
   }
 
@@ -70,6 +57,12 @@ const Login = () => {
                   <CForm onSubmit={handleSubmit}>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign in to your account</p>
+
+                    {(error || authError) && (
+                      <CAlert color="danger" className="mb-3">
+                        {error || authError}
+                      </CAlert>
+                    )}
 
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
@@ -101,14 +94,28 @@ const Login = () => {
 
                     <CRow>
                       <CCol xs={6}>
-                        <CButton type="submit" color="primary" className="px-4">
-                          Login
+                        <CButton
+                          type="submit"
+                          color="primary"
+                          className="px-4"
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <>
+                              <CSpinner size="sm" className="me-2" />
+                              Logging in...
+                            </>
+                          ) : (
+                            'Login'
+                          )}
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
-                          Forgot password?
-                        </CButton>
+                      <CCol xs={6} className="text-end">
+                        <Link to="/forgot-password">
+                          <CButton color="link" className="px-0">
+                            Forgot password?
+                          </CButton>
+                        </Link>
                       </CCol>
                     </CRow>
                   </CForm>
@@ -120,8 +127,8 @@ const Login = () => {
                   <div>
                     <h2>Sign up</h2>
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
+                      Create an account to get started with our platform and access all
+                      features.
                     </p>
                     <Link to="/register">
                       <CButton color="light" className="mt-3" active tabIndex={-1}>
